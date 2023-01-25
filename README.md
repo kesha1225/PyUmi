@@ -12,6 +12,18 @@ Now there are the following methods:
 - /sign_message
 - /restore_wallet
 
+
+### Install
+
+for stable version
+
+`pip install umipy`
+
+for dev version
+
+`pip install https://github.com/RoyFractal/PyUmi/archive/master.zip` 
+
+
 ### Usage
 
 You can find more examples - [examples/](examples/)
