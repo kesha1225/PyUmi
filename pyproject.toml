@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "umipy"
+version = "0.0.1"
+description = ""
+authors = ["kesha1225"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aiohttp = "^3.8.3"
+pydantic = "^1.10.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
