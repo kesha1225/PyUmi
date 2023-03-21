@@ -90,6 +90,26 @@ class UmiPy:
             )
         )["result"]
 
+    async def send_addresses(
+            self,
+            private_key: list[int],
+            from_address: str,
+            target_address: str,
+            amount: Union[float, int],
+    ) -> bool:
+        return (
+            await self.request(
+                "POST",
+                f"send_addresses",
+                data={
+                    "privateKey": private_key,
+                    "fromAddress": from_address,
+                    "targetAddress": target_address,
+                    "amount": amount,
+                },
+            )
+        )["result"]
+
     async def restore_wallet(
         self,
         mnemonic: str,
