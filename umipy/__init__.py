@@ -10,6 +10,7 @@ BASE_URL = "https://api.umipay.me"
 class Prefix:
     UMI = "umi"
     GLIZE = "glz"
+    GLIZE_STAKING = "gls"
 
 
 class UmiPy:
