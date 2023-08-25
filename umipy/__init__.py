@@ -47,6 +47,17 @@ class UmiPy:
             params["limit"] = limit
         if offset is not None:
             params["offset"] = offset
+        resp = await self.request(
+            "GET",
+            f"get_transactions/{address}",
+            params=params,
+        )
+        if not resp:
+            return TransactionsResponse(
+                totalCount=0,
+                items=[]
+            )
+
         return TransactionsResponse(
             **(
                 await self.request(
