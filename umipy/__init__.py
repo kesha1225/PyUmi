@@ -1,16 +1,15 @@
+import base64
+import json
 from typing import Optional, Union
 
 import aiohttp
+from nacl.bindings import crypto_sign, crypto_sign_open
+from nacl.exceptions import BadSignatureError
 
-from umipy.models import BalanceResponse, TransactionsResponse, WalletResponse
-
-BASE_URL = "https://api.umipay.me"
-
-
-class Prefix:
-    UMI = "umi"
-    GLIZE = "glz"
-    GLIZE_STAKING = "gls"
+from umipy.constants import Prefix, BASE_URL
+from umipy.generate_wallet import generate_wallet, restore_wallet
+from umipy.models import BalanceResponse, TransactionsResponse, WalletResponse, Keys
+from umipy.transfer import transfer_coins, transfer_addresses, to_public_key
 
 
 class UmiPy:
@@ -25,10 +24,10 @@ class UmiPy:
         method: str,
         path: str,
         params: Optional[dict] = None,
-        data: Optional[dict] = None,
+        data: Optional[dict | str] = None,
     ):
         response = await self.session.request(
-            method, f"{self.base_url}/{path}", params=params, data=data
+            method=method, url=f"{self.base_url}{path}", params=params, data=data
         )
         json_response = await response.json()
         return json_response
@@ -37,7 +36,11 @@ class UmiPy:
         await self.session.close()
 
     async def get_balance(self, address: str) -> BalanceResponse:
-        return BalanceResponse(**await self.request("GET", f"get_balance/{address}"))
+        response = await self.request("GET", f"/api/addresses/{address}/account")
+        if "error" in response:
+            return BalanceResponse(balance=0)
+
+        return BalanceResponse(balance=response["data"]["confirmedBalance"] / 100)
 
     async def get_transactions(
         self, address: str, limit: Optional[int] = None, offset: Optional[int] = None
@@ -47,25 +50,34 @@ class UmiPy:
             params["limit"] = limit
         if offset is not None:
             params["offset"] = offset
+
+        response = await self.request(
+            "GET",
+            f"/api/addresses/{address}/transactions",
+            params=params,
+        )
+
+        if "error" in response:
+            return TransactionsResponse(total_count=0, items=[])
+
         return TransactionsResponse(
             **(
                 await self.request(
                     "GET",
-                    f"get_transactions/{address}",
+                    f"/api/addresses/{address}/transactions",
                     params=params,
                 )
-            )["transactions"]
+            )["data"]
         )
 
-    async def generate_wallet(self, prefix: Prefix = Prefix.UMI) -> WalletResponse:
+    def generate_wallet(self, prefix: Prefix = Prefix.UMI) -> WalletResponse:
+        address, mnemonic, public_key, private_key = generate_wallet(prefix=prefix)
         return WalletResponse(
-            **(
-                await self.request(
-                    "POST",
-                    f"generate_wallet",
-                    data={"prefix": prefix},
-                )
-            )["wallet"]
+            address=address,
+            mnemonic=mnemonic,
+            keys=Keys(
+                public_key=public_key, private_key=private_key, key_type="банан беби"
+            ),
         )
 
     async def send(
@@ -76,70 +88,77 @@ class UmiPy:
         amount: Union[float, int],
         prefix: Prefix = Prefix.UMI,
     ) -> bool:
-        return (
-            await self.request(
-                "POST",
-                f"send",
-                data={
-                    "prefix": prefix,
-                    "privateKey": private_key,
-                    "publicKey": public_key,
-                    "targetAddress": target_address,
-                    "amount": amount,
-                },
-            )
-        )["result"]
+        encoded_data = transfer_coins(
+            public_key=public_key,
+            private_key=private_key,
+            target_address=target_address,
+            amount=amount,
+            prefix=prefix,
+        )
+
+        response = await self.request(
+            method="POST", path=f"/api/mempool", data=json.dumps({"data": encoded_data})
+        )
+        if "error" in response:
+            return False
+
+        return response["data"]
 
     async def send_addresses(
-            self,
-            private_key: list[int],
-            from_address: str,
-            target_address: str,
-            amount: Union[float, int],
+        self,
+        private_key: list[int],
+        from_address: str,
+        target_address: str,
+        amount: Union[float, int],
     ) -> bool:
-        return (
-            await self.request(
-                "POST",
-                f"send_addresses",
-                data={
-                    "privateKey": private_key,
-                    "fromAddress": from_address,
-                    "targetAddress": target_address,
-                    "amount": amount,
-                },
-            )
-        )["result"]
+        encoded_data = transfer_addresses(
+            private_key=private_key,
+            from_address=from_address,
+            to_address=target_address,
+            amount=amount,
+        )
+        response = await self.request(
+            method="POST", path=f"/api/mempool", data=json.dumps({"data": encoded_data})
+        )
+        if "error" in response:
+            return False
 
-    async def restore_wallet(
+        return response["data"]
+
+    def restore_wallet(
         self,
         mnemonic: str,
         prefix: Prefix = Prefix.UMI,
     ) -> WalletResponse:
+        address, mnemonic, public_key, private_key = restore_wallet(
+            mnemonic=mnemonic, prefix=prefix
+        )
         return WalletResponse(
-            **(
-                await self.request(
-                    "POST",
-                    f"restore_wallet",
-                    data={
-                        "prefix": prefix,
-                        "mnemonic": mnemonic,
-                    },
-                )
-            )["result"]
+            address=address,
+            mnemonic=mnemonic,
+            keys=Keys(
+                public_key=public_key, private_key=private_key, key_type="банан беби"
+            ),
         )
 
-    async def sign_message(
+    def sign_message(
         self,
         private_key: list[int],
         message: str,
     ) -> str:
-        return (
-            await self.request(
-                "POST",
-                f"sign_message",
-                data={
-                    "privateKey": private_key,
-                    "message": message,
-                },
-            )
-        )["result"]
+        encoded_message = message.encode()
+        result = crypto_sign(message=encoded_message, sk=bytes(private_key))
+
+        return base64.b64encode(result[: -len(encoded_message)]).decode()
+
+    def sign_verify(self, signature: str, original_message: str, address: str) -> bool:
+        public_key = to_public_key(address)
+        base64_sig = base64.b64decode(signature)
+
+        base64_sig += original_message.encode()
+        try:
+            result = crypto_sign_open(signed=base64_sig, pk=bytes(public_key))
+        except BadSignatureError:
+            return False
+
+        return result.decode() == original_message

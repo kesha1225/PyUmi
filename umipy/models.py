@@ -42,9 +42,9 @@ class TransactionsResponse(pydantic.BaseModel):
 
 
 class Keys(pydantic.BaseModel):
-    public_key: list[int] = pydantic.Field(alias="publicKey")
-    private_key: list[int] = pydantic.Field(alias="privateKey")
-    key_type: str = pydantic.Field(alias="keyType")
+    public_key: list[int]
+    private_key: list[int]
+    key_type: str
 
 
 class WalletResponse(pydantic.BaseModel):
