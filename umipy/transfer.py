@@ -56,7 +56,7 @@ def sign(trx: list[int], sk: list[int]) -> None:
 
 
 def sign_transaction(trx: list[int], sk: list[int]) -> None:
-    seconds = round(datetime.now().timestamp())
+    seconds = round(datetime.now().timestamp() - 1)
     trx += to_4(seconds)
     trx += to_4(int(random() * 9999))
     trx.append(0)
