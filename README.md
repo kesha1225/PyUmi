@@ -1,16 +1,6 @@
 # UMIPY
 
-Asynchronous python api wrapper for [umi-api](https://github.com/RoyFractal/umi-api)
-
-Implements all methods from umi-api.
-
-Now there are the following methods:
-- /get_balance
-- /get_transactions
-- /generate_wallet
-- /send
-- /sign_message
-- /restore_wallet
+Interaction with umi blockchain
 
 
 ### Install
