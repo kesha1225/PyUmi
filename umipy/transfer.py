@@ -1,3 +1,4 @@
+import time
 from typing import Union, Optional
 from base64 import b64encode
 from datetime import datetime
@@ -56,7 +57,7 @@ def sign(trx: list[int], sk: list[int]) -> None:
 
 
 def sign_transaction(trx: list[int], sk: list[int]) -> None:
-    seconds = round(datetime.now().timestamp() - 1)
+    seconds = int(time.time()) - 10
     trx += to_4(seconds)
     trx += to_4(int(random() * 9999))
     trx.append(0)
