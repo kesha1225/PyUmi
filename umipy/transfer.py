@@ -1,7 +1,6 @@
 import time
 from typing import Union, Optional
 from base64 import b64encode
-from datetime import datetime
 from random import random
 from nacl.bindings.crypto_sign import crypto_sign
 
@@ -21,10 +20,18 @@ def set_version(trx: list[int], version: int) -> None:
 def prefix_to_version(prefix: str) -> Optional[int]:
     if prefix == "genesis":
         return 0
-    if len(prefix) != 3:
+    if len(prefix) not in (3, 5):
         return None
-    a, b, c = tuple([ord(prefix[i]) - 96 for i in range(3)])
-    return (a << 10) + (b << 5) + c
+
+    to_check = []
+    for i in range(len(prefix)):
+        modifier = 47 if any(char.isdigit() for char in prefix[i]) else 96
+        to_check.append(ord(prefix[i]) - modifier)
+
+    if len(to_check) > 3:
+        return 32768 + ((to_check[3] << 5) + to_check[4])
+
+    return (to_check[0] << 10) + (to_check[1] << 5) + to_check[2]
 
 
 def to_2(value: int) -> list[int]:

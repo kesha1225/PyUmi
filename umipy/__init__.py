@@ -1,5 +1,4 @@
 import base64
-import json
 from typing import Optional, Union
 
 import aiohttp
@@ -27,7 +26,7 @@ class UmiPy:
         data: Optional[dict | str] = None,
     ):
         response = await self.session.request(
-            method=method, url=f"{self.base_url}{path}", params=params, data=data
+            method=method, url=f"{self.base_url}{path}", params=params, json=data
         )
         json_response = await response.json()
         return json_response
@@ -97,7 +96,7 @@ class UmiPy:
         )
 
         response = await self.request(
-            method="POST", path=f"/api/mempool", data=json.dumps({"data": encoded_data})
+            method="POST", path=f"/api/mempool", data={"data": encoded_data}
         )
         if "error" in response:
             return False
@@ -118,7 +117,7 @@ class UmiPy:
             amount=amount,
         )
         response = await self.request(
-            method="POST", path=f"/api/mempool", data=json.dumps({"data": encoded_data})
+            method="POST", path=f"/api/mempool", data={"data": encoded_data}
         )
         if "error" in response:
             return False
