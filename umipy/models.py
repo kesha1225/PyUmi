@@ -1,4 +1,5 @@
 import pydantic
+from pydantic import AliasChoices
 
 
 class BalanceResponse(pydantic.BaseModel):
@@ -37,7 +38,9 @@ class Transaction(pydantic.BaseModel):
 
 
 class TransactionsResponse(pydantic.BaseModel):
-    total_count: int = pydantic.Field(alias="totalCount")
+    total_count: int = pydantic.Field(
+        alias="totalCount", validation_alias=AliasChoices("totalCount", "total_count")
+    )
     items: list[Transaction]
 
 

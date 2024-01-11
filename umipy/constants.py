@@ -1,4 +1,5 @@
-BASE_URL = "https://mainnet.umi.top"
+BASE_URL_MAINNET = "https://mainnet.umi.top"
+BASE_URL_TESTNET = "https://testnet.umi.top"
 
 
 class Prefix:

@@ -5,7 +5,7 @@ import aiohttp
 from nacl.bindings import crypto_sign, crypto_sign_open
 from nacl.exceptions import BadSignatureError
 
-from umipy.constants import Prefix, BASE_URL
+from umipy.constants import Prefix, BASE_URL_MAINNET
 from umipy.generate_wallet import generate_wallet, restore_wallet
 from umipy.models import BalanceResponse, TransactionsResponse, WalletResponse, Keys
 from umipy.transfer import transfer_coins, transfer_addresses, to_public_key
@@ -13,7 +13,7 @@ from umipy.transfer import transfer_coins, transfer_addresses, to_public_key
 
 class UmiPy:
     def __init__(
-        self, session: Optional[aiohttp.ClientSession] = None, base_url: str = BASE_URL
+        self, session: Optional[aiohttp.ClientSession] = None, base_url: str = BASE_URL_MAINNET
     ):
         self.base_url = base_url
         self.session = session or aiohttp.ClientSession()
@@ -59,15 +59,7 @@ class UmiPy:
         if "error" in response:
             return TransactionsResponse(total_count=0, items=[])
 
-        return TransactionsResponse(
-            **(
-                await self.request(
-                    "GET",
-                    f"/api/addresses/{address}/transactions",
-                    params=params,
-                )
-            )["data"]
-        )
+        return TransactionsResponse(**response["data"])
 
     def generate_wallet(self, prefix: Prefix = Prefix.UMI) -> WalletResponse:
         address, mnemonic, public_key, private_key = generate_wallet(prefix=prefix)
