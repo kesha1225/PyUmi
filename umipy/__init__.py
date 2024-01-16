@@ -13,7 +13,9 @@ from umipy.transfer import transfer_coins, transfer_addresses, to_public_key
 
 class UmiPy:
     def __init__(
-        self, session: Optional[aiohttp.ClientSession] = None, base_url: str = BASE_URL_MAINNET
+        self,
+        session: Optional[aiohttp.ClientSession] = None,
+        base_url: str = BASE_URL_MAINNET,
     ):
         self.base_url = base_url
         self.session = session or aiohttp.ClientSession()

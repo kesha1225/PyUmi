@@ -109,8 +109,19 @@ def transfer_addresses(
     trx: list[int] = []
     set_version(trx, 8)
 
-    token_to = to_address[:3]
-    token_from = from_address[:3]
+    if len(to_address) == 62:
+        slicer_to = 3
+    else:
+        slicer_to = 5
+
+    token_to = to_address[:slicer_to]
+
+    if len(from_address) == 62:
+        slicer_from = 3
+    else:
+        slicer_from = 5
+
+    token_from = from_address[:slicer_from]
 
     prefix_binary_to = to_2(prefix_to_version(token_to))
     prefix_binary_from = to_2(prefix_to_version(token_from))
