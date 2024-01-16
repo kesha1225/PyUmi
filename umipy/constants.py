@@ -9,3 +9,4 @@ class Prefix:
 
     ROD_STAKING = "rod01"
     ROD_TRADING = "rod"
+    ROD_TESTNET = "rod99"
