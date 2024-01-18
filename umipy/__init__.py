@@ -7,7 +7,13 @@ from nacl.exceptions import BadSignatureError
 
 from umipy.constants import Prefix, BASE_URL_MAINNET
 from umipy.generate_wallet import generate_wallet, restore_wallet
-from umipy.models import BalanceResponse, TransactionsResponse, WalletResponse, Keys
+from umipy.models import (
+    BalanceResponse,
+    TransactionsResponse,
+    WalletResponse,
+    Keys,
+    TransactionResponse,
+)
 from umipy.transfer import transfer_coins, transfer_addresses, to_public_key
 
 
@@ -155,3 +161,14 @@ class UmiPy:
             return False
 
         return result.decode() == original_message
+
+    async def get_transaction(self, transaction_hash: str) -> TransactionResponse:
+        response = TransactionResponse(
+            **await (
+                await self.session.request(
+                    method="GET",
+                    url=f"https://stats.umi.top/transactions/{transaction_hash}",
+                )
+            ).json()
+        )
+        return response

@@ -54,3 +54,9 @@ class WalletResponse(pydantic.BaseModel):
     mnemonic: str
     keys: Keys
     address: str
+
+
+class TransactionResponse(pydantic.BaseModel):
+    status: str
+    code: int | None = None
+    data: Transaction | None = None
