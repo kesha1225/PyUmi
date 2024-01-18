@@ -86,7 +86,7 @@ class UmiPy:
         target_address: str,
         amount: Union[float, int],
         prefix: Prefix = Prefix.UMI,
-    ) -> bool:
+    ) -> bool | dict[str, str]:
         encoded_data = transfer_coins(
             public_key=public_key,
             private_key=private_key,
@@ -109,7 +109,7 @@ class UmiPy:
         from_address: str,
         target_address: str,
         amount: Union[float, int],
-    ) -> bool:
+    ) -> bool | dict[str, str]:
         encoded_data = transfer_addresses(
             private_key=private_key,
             from_address=from_address,
