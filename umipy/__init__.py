@@ -69,7 +69,7 @@ class UmiPy:
 
         return TransactionsResponse(**response["data"])
 
-    def generate_wallet(self, prefix: Prefix = Prefix.UMI) -> WalletResponse:
+    def generate_wallet(self, prefix: str = Prefix.UMI) -> WalletResponse:
         address, mnemonic, public_key, private_key = generate_wallet(prefix=prefix)
         return WalletResponse(
             address=address,
@@ -85,7 +85,7 @@ class UmiPy:
         public_key: list[int],
         target_address: str,
         amount: Union[float, int],
-        prefix: Prefix = Prefix.UMI,
+        prefix: str = Prefix.UMI,
     ) -> bool | dict[str, str]:
         encoded_data = transfer_coins(
             public_key=public_key,
@@ -127,7 +127,7 @@ class UmiPy:
     def restore_wallet(
         self,
         mnemonic: str,
-        prefix: Prefix = Prefix.UMI,
+        prefix: str = Prefix.UMI,
     ) -> WalletResponse:
         address, mnemonic, public_key, private_key = restore_wallet(
             mnemonic=mnemonic, prefix=prefix

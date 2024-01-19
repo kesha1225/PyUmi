@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "umipy"
-version = "1.0.2"
+version = "1.0.3"
 description = ""
 authors = ["kesha1225"]
 readme = "README.md"
