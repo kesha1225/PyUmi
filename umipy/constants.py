@@ -1,6 +1,9 @@
 BASE_URL_MAINNET = "https://mainnet.umi.top"
 BASE_URL_TESTNET = "https://testnet.umi.top"
 
+BASE_STATS_URL_MAINNET = "https://stats.umi.top"
+BASE_STATS_URL_TESTNET = "https://stats-testnet.umi.top"
+
 
 class Prefix:
     UMI = "umi"

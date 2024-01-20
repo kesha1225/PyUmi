@@ -5,7 +5,7 @@ import aiohttp
 from nacl.bindings import crypto_sign, crypto_sign_open
 from nacl.exceptions import BadSignatureError
 
-from umipy.constants import Prefix, BASE_URL_MAINNET
+from umipy.constants import Prefix, BASE_URL_MAINNET, BASE_STATS_URL_MAINNET
 from umipy.generate_wallet import generate_wallet, restore_wallet
 from umipy.models import (
     BalanceResponse,
@@ -22,8 +22,10 @@ class UmiPy:
         self,
         session: Optional[aiohttp.ClientSession] = None,
         base_url: str = BASE_URL_MAINNET,
+        base_stats_url: str = BASE_STATS_URL_MAINNET,
     ):
         self.base_url = base_url
+        self.base_stats_url = base_stats_url
         self.session = session or aiohttp.ClientSession()
 
     async def request(
@@ -167,7 +169,7 @@ class UmiPy:
             **await (
                 await self.session.request(
                     method="GET",
-                    url=f"https://stats.umi.top/transactions/{transaction_hash}",
+                    url=f"{self.base_stats_url}/transactions/{transaction_hash}",
                 )
             ).json()
         )
