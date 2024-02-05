@@ -8,33 +8,65 @@ class BalanceResponse(pydantic.BaseModel):
 
 class Transaction(pydantic.BaseModel):
     height: int
-    block_timestamp: str = pydantic.Field(alias="blockTimestamp")
-    block_height: int = pydantic.Field(alias="blockHeight")
-    block_transaction_index: int = pydantic.Field(alias="blockTransactionIndex")
+    block_timestamp: str = pydantic.Field(
+        validation_alias=AliasChoices("blockTimestamp", "block_timestamp")
+    )
+    block_height: int = pydantic.Field(
+        validation_alias=AliasChoices("blockHeight", "block_height")
+    )
+    block_transaction_index: int | None = pydantic.Field(
+        validation_alias=AliasChoices(
+            "blockTransactionIndex", "block_transaction_index"
+        )
+    )
     hash: str
     type: str
     version: int
     amount: int
-    sender_address: str = pydantic.Field(alias="senderAddress")
-    sender_account_type: str = pydantic.Field(alias="senderAccountType")
-    sender_account_balance: int = pydantic.Field(alias="senderAccountBalance")
-    sender_account_interest_rate: int = pydantic.Field(
-        alias="senderAccountInterestRate"
+    sender_address: str = pydantic.Field(
+        validation_alias=AliasChoices("senderAddress", "sender_address")
+    )
+    sender_account_type: str = pydantic.Field(
+        validation_alias=AliasChoices("senderAccountType", "sender_account_type")
+    )
+    sender_account_balance: int | None = pydantic.Field(
+        validation_alias=AliasChoices("senderAccountBalance", "sender_account_balance")
+    )
+    sender_account_interest_rate: int | None = pydantic.Field(
+        validation_alias=AliasChoices(
+            "senderAccountInterestRate", "sender_account_interest_rate"
+        )
     )
     sender_account_transaction_count: int = pydantic.Field(
-        alias="senderAccountTransactionCount"
+        validation_alias=AliasChoices(
+            "senderAccountTransactionCount", "sender_account_transaction_count"
+        )
     )
-    recipient_amount: int = pydantic.Field(alias="recipientAmount")
-    recipient_address: str = pydantic.Field(alias="recipientAddress")
-    recipient_account_type: str = pydantic.Field(alias="recipientAccountType")
-    recipient_account_balance: int = pydantic.Field(alias="recipientAccountBalance")
-    recipient_account_interest_rate: int = pydantic.Field(
-        alias="recipientAccountInterestRate"
+    recipient_amount: int = pydantic.Field(
+        validation_alias=AliasChoices("recipientAmount", "recipient_amount")
+    )
+    recipient_address: str = pydantic.Field(
+        validation_alias=AliasChoices("recipientAddress", "recipient_address")
+    )
+    recipient_account_type: str = pydantic.Field(
+        validation_alias=AliasChoices("recipientAccountType", "recipient_account_type")
+    )
+    recipient_account_balance: int | None = pydantic.Field(
+        validation_alias=AliasChoices(
+            "recipientAccountBalance", "recipient_account_balance"
+        )
+    )
+    recipient_account_interest_rate: int | None = pydantic.Field(
+        validation_alias=AliasChoices(
+            "recipientAccountInterestRate", "recipient_account_interest_rate"
+        )
     )
     recipient_account_transaction_count: int = pydantic.Field(
-        alias="recipientAccountTransactionCount"
+        validation_alias=AliasChoices(
+            "recipientAccountTransactionCount", "recipient_account_transaction_count"
+        )
     )
-    timestamp: str
+    timestamp: str | None = None
 
 
 class TransactionsResponse(pydantic.BaseModel):

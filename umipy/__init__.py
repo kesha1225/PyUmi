@@ -5,7 +5,13 @@ import aiohttp
 from nacl.bindings import crypto_sign, crypto_sign_open
 from nacl.exceptions import BadSignatureError
 
-from umipy.constants import Prefix, BASE_URL_MAINNET, BASE_STATS_URL_MAINNET
+from umipy.constants import (
+    Prefix,
+    BASE_URL_MAINNET,
+    BASE_STATS_URL_MAINNET,
+    BASE_URL_TESTNET,
+    BASE_STATS_URL_TESTNET,
+)
 from umipy.generate_wallet import generate_wallet, restore_wallet
 from umipy.models import (
     BalanceResponse,
@@ -21,11 +27,15 @@ class UmiPy:
     def __init__(
         self,
         session: Optional[aiohttp.ClientSession] = None,
-        base_url: str = BASE_URL_MAINNET,
-        base_stats_url: str = BASE_STATS_URL_MAINNET,
+        is_testnet: bool = False,
     ):
-        self.base_url = base_url
-        self.base_stats_url = base_stats_url
+        if is_testnet:
+            self.base_url = BASE_URL_TESTNET
+            self.base_stats_url = BASE_STATS_URL_TESTNET
+        else:
+            self.base_url = BASE_URL_MAINNET
+            self.base_stats_url = BASE_STATS_URL_MAINNET
+
         self.session = session or aiohttp.ClientSession()
 
     async def request(
@@ -70,6 +80,30 @@ class UmiPy:
             return TransactionsResponse(total_count=0, items=[])
 
         return TransactionsResponse(**response["data"])
+
+    async def get_input_transactions(
+        self, address: str, limit: Optional[int] = None, offset: Optional[int] = None
+    ) -> TransactionsResponse:
+        params = {}
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+
+        response = await (
+            await self.session.request(
+                method="GET",
+                url=f"{self.base_stats_url}/address/{address}/transactions/received",
+                params=params,
+            )
+        ).json()
+
+        if response["status"] == "error":
+            return TransactionsResponse(total_count=0, items=[])
+
+        return TransactionsResponse(
+            total_count=response["limit"], items=response["data"]
+        )
 
     def generate_wallet(self, prefix: str = Prefix.UMI) -> WalletResponse:
         address, mnemonic, public_key, private_key = generate_wallet(prefix=prefix)
