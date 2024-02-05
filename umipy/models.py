@@ -1,5 +1,5 @@
 import pydantic
-from pydantic import AliasChoices
+from pydantic import AliasChoices, validator, field_validator
 
 
 class BalanceResponse(pydantic.BaseModel):
@@ -22,7 +22,7 @@ class Transaction(pydantic.BaseModel):
     hash: str
     type: str
     version: int
-    amount: int
+    amount: int | None
     sender_address: str = pydantic.Field(
         validation_alias=AliasChoices("senderAddress", "sender_address")
     )
@@ -42,7 +42,7 @@ class Transaction(pydantic.BaseModel):
             "senderAccountTransactionCount", "sender_account_transaction_count"
         )
     )
-    recipient_amount: int = pydantic.Field(
+    recipient_amount: int | None = pydantic.Field(
         validation_alias=AliasChoices("recipientAmount", "recipient_amount")
     )
     recipient_address: str = pydantic.Field(
@@ -67,6 +67,10 @@ class Transaction(pydantic.BaseModel):
         )
     )
     timestamp: str | None = None
+
+    @field_validator("amount")
+    def amount_validate(cls, amount: int | None) -> int:
+        return amount or 0
 
 
 class TransactionsResponse(pydantic.BaseModel):
