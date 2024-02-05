@@ -37,7 +37,7 @@ class Transaction(pydantic.BaseModel):
     timestamp: str
 
 
-class InputTransaction(pydantic.BaseModel):
+class StatsTransaction(pydantic.BaseModel):
     height: int
     block_timestamp: str
     block_height: int
