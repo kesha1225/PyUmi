@@ -105,6 +105,30 @@ class UmiPy:
             total_count=response["limit"], items=response["data"]
         )
 
+    async def get_sent_transactions(
+        self, address: str, limit: Optional[int] = None, offset: Optional[int] = None
+    ) -> TransactionsResponse:
+        params = {}
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+
+        response = await (
+            await self.session.request(
+                method="GET",
+                url=f"{self.base_stats_url}/address/{address}/transactions/sended",
+                params=params,
+            )
+        ).json()
+
+        if response["status"] == "error":
+            return TransactionsResponse(total_count=0, items=[])
+
+        return TransactionsResponse(
+            total_count=response["limit"], items=response["data"]
+        )
+
     def generate_wallet(self, prefix: str = Prefix.UMI) -> WalletResponse:
         address, mnemonic, public_key, private_key = generate_wallet(prefix=prefix)
         return WalletResponse(
