@@ -108,7 +108,7 @@ class UmiPy:
 
     async def get_sent_transactions(
         self, address: str, limit: Optional[int] = None, offset: Optional[int] = None
-    ) -> TransactionsResponse:
+    ) -> InputTransactionsResponse:
         params = {}
         if limit is not None:
             params["limit"] = limit
@@ -124,9 +124,9 @@ class UmiPy:
         ).json()
 
         if response["status"] == "error":
-            return TransactionsResponse(total_count=0, items=[])
+            return InputTransactionsResponse(total_count=0, items=[])
 
-        return TransactionsResponse(
+        return InputTransactionsResponse(
             total_count=response["limit"], items=response["data"]
         )
 
