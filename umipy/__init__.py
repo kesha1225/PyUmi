@@ -12,6 +12,7 @@ from umipy.constants import (
     BASE_URL_TESTNET,
     BASE_STATS_URL_TESTNET,
 )
+from umipy.enums import BalanceType
 from umipy.generate_wallet import generate_wallet, restore_wallet
 from umipy.models import (
     BalanceResponse,
@@ -55,12 +56,12 @@ class UmiPy:
     async def close(self):
         await self.session.close()
 
-    async def get_balance(self, address: str) -> BalanceResponse:
+    async def get_balance(self, address: str, balance_type: BalanceType = BalanceType.confirmed) -> BalanceResponse:
         response = await self.request("GET", f"/api/addresses/{address}/account")
         if "error" in response:
             return BalanceResponse(balance=0)
 
-        return BalanceResponse(balance=response["data"]["confirmedBalance"] / 100)
+        return BalanceResponse(balance=response["data"][balance_type.value] / 100)
 
     async def get_transactions(
         self, address: str, limit: Optional[int] = None, offset: Optional[int] = None

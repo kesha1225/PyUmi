@@ -7,7 +7,7 @@ async def main():
     umi = UmiPy()
 
     trans_data = await umi.get_input_transactions(
-        address="glz1ajlr7tx8csegkkwqn93c3ntsszqelrdr4z77ak05fctpl6yrvnpql8f0uv",
+        address="rod1t6q9zdg9wnmet3hc9fwulsqa4qhd52fg53eqdwnx2wccp2czmllq3t302y",
         limit=300,
     )
     print(len(trans_data.items))
