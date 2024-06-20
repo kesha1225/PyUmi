@@ -1,5 +1,5 @@
 import pydantic
-from pydantic import AliasChoices, validator, field_validator
+from pydantic import AliasChoices
 
 
 class BalanceResponse(pydantic.BaseModel):
@@ -51,13 +51,13 @@ class StatsTransaction(pydantic.BaseModel):
     sender_account_type: str
     sender_account_balance: int | None
     sender_account_interest_rate: int | None
-    sender_account_transaction_count: int
+    sender_account_transaction_count: int | None
     recipient_amount: int | None
     recipient_address: str
     recipient_account_type: str
     recipient_account_balance: int | None
     recipient_account_interest_rate: int | None
-    recipient_account_transaction_count: int
+    recipient_account_transaction_count: int | None
     fee_amount: int | None = None
     fee_address: str | None = None
     fee_account_balance: str | None = None
@@ -65,7 +65,6 @@ class StatsTransaction(pydantic.BaseModel):
     fee_account_transaction_count: int | None
 
     # fee_percent
-    # nft
     sender: str
     recipient: str
     value: int
