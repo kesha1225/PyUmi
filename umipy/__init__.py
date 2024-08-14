@@ -56,7 +56,9 @@ class UmiPy:
     async def close(self):
         await self.session.close()
 
-    async def get_balance(self, address: str, balance_type: BalanceType = BalanceType.confirmed) -> BalanceResponse:
+    async def get_balance(
+        self, address: str, balance_type: BalanceType = BalanceType.confirmed
+    ) -> BalanceResponse:
         response = await self.request("GET", f"/api/addresses/{address}/account")
         if "error" in response:
             return BalanceResponse(balance=0)

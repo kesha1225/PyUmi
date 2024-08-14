@@ -16,7 +16,8 @@ async def main():
     print(trans)
 
     unconfirmed_balance = await umi.get_balance(
-        "glz1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsqexcfq", balance_type=BalanceType.unconfirmed
+        "glz1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsqexcfq",
+        balance_type=BalanceType.unconfirmed,
     )
     print(unconfirmed_balance)
 
