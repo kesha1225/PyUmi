@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install codecov
-        run: pip install pytest pytest-cov
+        run: pip install pytest pytest-cov pytest-mock pytest-asyncio
 
       - name: Install other
         run: pip install -r requirements.txt
