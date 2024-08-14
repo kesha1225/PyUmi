@@ -1,4 +1,5 @@
 # UMIPY
+[![codecov](https://codecov.io/github/kesha1225/PyUmi/graph/badge.svg?token=PZ12EHSKAH)](https://codecov.io/github/kesha1225/PyUmi)
 
 Interaction with umi blockchain
 
