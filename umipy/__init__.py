@@ -21,6 +21,7 @@ from umipy.models import (
     Keys,
     TransactionResponse,
     InputTransactionsResponse,
+    SendResponse,
 )
 from umipy.transfer import transfer_coins, transfer_addresses, to_public_key
 
@@ -150,7 +151,7 @@ class UmiPy:
         target_address: str,
         amount: Union[float, int],
         prefix: str = Prefix.UMI,
-    ) -> bool | dict[str, str]:
+    ) -> SendResponse:
         encoded_data = transfer_coins(
             public_key=public_key,
             private_key=private_key,
@@ -163,9 +164,9 @@ class UmiPy:
             method="POST", path=f"/api/mempool", data={"data": encoded_data}
         )
         if "error" in response:
-            return False
+            return SendResponse(status=False, send_data=response)
 
-        return response["data"]
+        return SendResponse(status=True, send_data=response)
 
     async def send_addresses(
         self,
@@ -173,7 +174,7 @@ class UmiPy:
         from_address: str,
         target_address: str,
         amount: Union[float, int],
-    ) -> bool | dict[str, str]:
+    ) -> SendResponse:
         encoded_data = transfer_addresses(
             private_key=private_key,
             from_address=from_address,
@@ -184,9 +185,9 @@ class UmiPy:
             method="POST", path=f"/api/mempool", data={"data": encoded_data}
         )
         if "error" in response:
-            return False
+            return SendResponse(status=False, send_data=response)
 
-        return response["data"]
+        return SendResponse(status=True, send_data=response)
 
     def restore_wallet(
         self,

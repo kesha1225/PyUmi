@@ -6,10 +6,10 @@ from umipy import UmiPy, Prefix
 async def main():
     umi = UmiPy()
     my_mnemonic = "word1 word2..."
-    old_wallet = umi.restore_wallet(my_mnemonic, prefix=Prefix.GLIZE_STAKING)
+    old_wallet = umi.restore_wallet(my_mnemonic, prefix=Prefix.ROD_TRADING)
     # restore old wallet with balance by mnemonic
 
-    new_wallet = umi.generate_wallet(prefix=Prefix.GLIZE)
+    new_wallet = umi.generate_wallet(prefix=Prefix.ROD_TRADING)
     print(new_wallet.mnemonic)
     balance = await umi.get_balance(new_wallet.address)
     print(balance)  # 0

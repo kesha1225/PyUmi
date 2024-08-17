@@ -104,3 +104,8 @@ class TransactionResponse(pydantic.BaseModel):
     status: str
     code: int | None = None
     data: Transaction | None = None
+
+
+class SendResponse(pydantic.BaseModel):
+    status: bool
+    send_data: dict
