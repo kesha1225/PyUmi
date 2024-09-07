@@ -11,6 +11,8 @@ from umipy.constants import (
     BASE_STATS_URL_MAINNET,
     BASE_URL_TESTNET,
     BASE_STATS_URL_TESTNET,
+    BASE_URL_LEGEND_MAINNET,
+    BASE_URL_ORIGINAL_TESTNET,
 )
 from umipy.enums import BalanceType
 from umipy.generate_wallet import generate_wallet, restore_wallet
@@ -26,18 +28,28 @@ from umipy.models import (
 from umipy.transfer import transfer_coins, transfer_addresses, to_public_key
 
 
+def get_api_urls(is_testnet: bool, is_legend: bool) -> tuple[str, str]:
+    match (is_testnet, is_legend):
+        case (True, True):
+            return BASE_URL_TESTNET, BASE_STATS_URL_TESTNET
+        case (True, False):
+            return BASE_URL_ORIGINAL_TESTNET, BASE_STATS_URL_TESTNET
+        case (False, True):
+            return BASE_URL_LEGEND_MAINNET, BASE_STATS_URL_MAINNET
+        case (False, False):
+            return BASE_URL_MAINNET, BASE_STATS_URL_MAINNET
+
+
 class UmiPy:
     def __init__(
         self,
         session: Optional[aiohttp.ClientSession] = None,
         is_testnet: bool = False,
+        is_legend: bool = False,
     ):
-        if is_testnet:
-            self.base_url = BASE_URL_TESTNET
-            self.base_stats_url = BASE_STATS_URL_TESTNET
-        else:
-            self.base_url = BASE_URL_MAINNET
-            self.base_stats_url = BASE_STATS_URL_MAINNET
+        base_url, stats_url = get_api_urls(is_testnet=is_testnet, is_legend=is_legend)
+        self.base_url = base_url
+        self.base_stats_url = stats_url
 
         self.session = session or aiohttp.ClientSession()
 
