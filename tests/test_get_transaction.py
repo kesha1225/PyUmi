@@ -33,10 +33,52 @@ from umipy import UmiPy
         ),
     ],
 )
-async def test_get_balance(
+async def test_get_tx(
     umi: UmiPy, tx_hash: str, status: str, height: str | None, amount: str | None
 ):
     transaction_data = await umi.get_transaction(tx_hash)
+    assert transaction_data.status == status
+
+    if height:
+        assert transaction_data.data.height == height
+
+    if amount:
+        assert transaction_data.data.amount == amount
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "tx_hash, status, height, amount",
+    [
+        (
+            "3d361f1a2ca22d4b73cae4da641bc2cfe8e31da9583804ac0a351101225e9fbb",
+            "success",
+            18,
+            10_00,
+        ),
+        (
+            "6fbb5a93fc4e2a6ba435c08157dd9c129234217fcf3711146b34da1963b6c1be",
+            "success",
+            22,
+            1,
+        ),
+        (
+            "4a43760552510497ce135f6d0579e601f4ff8352ded5cf19f7e156a5dc73c2fe",
+            "error",
+            None,
+            None,
+        ),
+    ],
+)
+async def test_get_tx_legend(
+    umi_testnet_legend: UmiPy,
+    tx_hash: str,
+    status: str,
+    height: str | None,
+    amount: str | None,
+):
+    transaction_data = await umi_testnet_legend.get_transaction(tx_hash)
+
     assert transaction_data.status == status
 
     if height:

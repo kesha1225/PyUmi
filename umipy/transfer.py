@@ -20,6 +20,13 @@ def set_version(trx: list[int], version: int) -> None:
 def prefix_to_version(prefix: str) -> Optional[int]:
     if prefix == "genesis":
         return 0
+
+    if prefix == Prefix.UMI_TRADING:
+        return 1
+
+    if prefix == Prefix.UMI_STAKING:
+        return 2
+
     if len(prefix) not in (3, 5):
         return None
 
@@ -105,12 +112,15 @@ def transfer_addresses(
     from_address: str,
     to_address: str,
     amount: Union[int, float],
+    send_version: int,
 ) -> str:
     trx: list[int] = []
-    set_version(trx, 8)
+    set_version(trx, send_version)
 
     if len(to_address) == 62:
         slicer_to = 3
+    elif len(to_address) == 67:  # umistake | umitrade
+        slicer_to = 8
     else:
         slicer_to = 5
 
@@ -118,6 +128,8 @@ def transfer_addresses(
 
     if len(from_address) == 62:
         slicer_from = 3
+    elif len(to_address) == 67:  # umistake | umitrade
+        slicer_from = 8
     else:
         slicer_from = 5
 

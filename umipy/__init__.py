@@ -24,6 +24,7 @@ from umipy.models import (
     TransactionResponse,
     InputTransactionsResponse,
     SendResponse,
+    Transaction,
 )
 from umipy.transfer import transfer_coins, transfer_addresses, to_public_key
 
@@ -40,6 +41,13 @@ def get_api_urls(is_testnet: bool, is_legend: bool) -> tuple[str, str]:
             return BASE_URL_MAINNET, BASE_STATS_URL_MAINNET
 
 
+def get_send_version(is_legend: bool) -> int:
+    if is_legend:
+        return 100
+    else:
+        return 8
+
+
 class UmiPy:
     def __init__(
         self,
@@ -48,8 +56,10 @@ class UmiPy:
         is_legend: bool = False,
     ):
         base_url, stats_url = get_api_urls(is_testnet=is_testnet, is_legend=is_legend)
+        self.is_legend = is_legend
         self.base_url = base_url
         self.base_stats_url = stats_url
+        self.send_version = get_send_version(is_legend=is_legend)
 
         self.session = session or aiohttp.ClientSession()
 
@@ -192,6 +202,7 @@ class UmiPy:
             from_address=from_address,
             to_address=target_address,
             amount=amount,
+            send_version=self.send_version,
         )
         response = await self.request(
             method="POST", path=f"/api/mempool", data={"data": encoded_data}
@@ -240,6 +251,11 @@ class UmiPy:
         return result.decode() == original_message
 
     async def get_transaction(self, transaction_hash: str) -> TransactionResponse:
+        if self.is_legend:
+            return await self._get_legend_transaction_from_node(
+                transaction_hash=transaction_hash
+            )
+
         response = TransactionResponse(
             **await (
                 await self.session.request(
@@ -249,3 +265,18 @@ class UmiPy:
             ).json()
         )
         return response
+
+    async def _get_legend_transaction_from_node(
+        self, transaction_hash: str
+    ) -> TransactionResponse:
+        response = await (
+            await self.session.request(
+                method="GET",
+                url=f"{self.base_url}/api/transactions/{transaction_hash}",
+            )
+        ).json()
+        if "error" in response:
+            return TransactionResponse(status="error", code=500, data=None)
+        return TransactionResponse(
+            status="success", code=None, data=Transaction(**response["data"])
+        )
