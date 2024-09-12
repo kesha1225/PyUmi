@@ -94,34 +94,3 @@ def convertbits(data, frombits, tobits, pad=True) -> list[int] | None:
     elif bits >= frombits or ((acc << (tobits - bits)) & maxv):
         return None
     return ret
-
-
-def decode(hrp, addr):
-    """Decode a segwit address."""
-    hrpgot, data, spec = bech32_decode(addr)
-    if hrpgot != hrp:
-        return None, None
-    decoded = convertbits(data[1:], 5, 8, False)
-    if decoded is None or len(decoded) < 2 or len(decoded) > 40:
-        return None, None
-    if data[0] > 16:
-        return None, None
-    if data[0] == 0 and len(decoded) != 20 and len(decoded) != 32:
-        return None, None
-    if (
-        data[0] == 0
-        and spec != Encoding.BECH32
-        or data[0] != 0
-        and spec != Encoding.BECH32M
-    ):
-        return None, None
-    return data[0], decoded
-
-
-def encode(hrp, witver, witprog) -> str | None:
-    """Encode a segwit address."""
-    spec = Encoding.BECH32 if witver == 0 else Encoding.BECH32M
-    ret = bech32_encode(hrp, [witver] + convertbits(witprog, 8, 5), spec)
-    if decode(hrp, ret) == (None, None):
-        return None
-    return ret

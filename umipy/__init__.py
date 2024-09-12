@@ -1,5 +1,4 @@
 import base64
-from typing import Optional, Union
 
 import aiohttp
 from nacl.bindings import crypto_sign, crypto_sign_open
@@ -51,7 +50,7 @@ def get_send_version(is_legend: bool) -> int:
 class UmiPy:
     def __init__(
         self,
-        session: Optional[aiohttp.ClientSession] = None,
+        session: aiohttp.ClientSession | None = None,
         is_testnet: bool = False,
         is_legend: bool = False,
     ):
@@ -67,8 +66,8 @@ class UmiPy:
         self,
         method: str,
         path: str,
-        params: Optional[dict] = None,
-        data: Optional[dict | str] = None,
+        params: dict | None = None,
+        data: dict | str | None = None,
     ):
         response = await self.session.request(
             method=method, url=f"{self.base_url}{path}", params=params, json=data
@@ -89,7 +88,7 @@ class UmiPy:
         return BalanceResponse(balance=response["data"][balance_type.value] / 100)
 
     async def get_transactions(
-        self, address: str, limit: Optional[int] = None, offset: Optional[int] = None
+        self, address: str, limit: int | None = None, offset: int | None = None
     ) -> TransactionsResponse:
         params = {}
         if limit is not None:
@@ -109,7 +108,7 @@ class UmiPy:
         return TransactionsResponse(**response["data"])
 
     async def get_input_transactions(
-        self, address: str, limit: Optional[int] = None, offset: Optional[int] = None
+        self, address: str, limit: int | None = None, offset: int | None = None
     ) -> InputTransactionsResponse:
         params = {}
         if limit is not None:
@@ -133,7 +132,7 @@ class UmiPy:
         )
 
     async def get_sent_transactions(
-        self, address: str, limit: Optional[int] = None, offset: Optional[int] = None
+        self, address: str, limit: int | None = None, offset: int | None = None
     ) -> InputTransactionsResponse:
         params = {}
         if limit is not None:
@@ -171,7 +170,7 @@ class UmiPy:
         private_key: list[int],
         public_key: list[int],
         target_address: str,
-        amount: Union[float, int],
+        amount: float | int,
         prefix: str = Prefix.UMI,
     ) -> SendResponse:
         encoded_data = transfer_coins(
@@ -195,7 +194,7 @@ class UmiPy:
         private_key: list[int],
         from_address: str,
         target_address: str,
-        amount: Union[float, int],
+        amount: float | int,
     ) -> SendResponse:
         encoded_data = transfer_addresses(
             private_key=private_key,
