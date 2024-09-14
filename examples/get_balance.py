@@ -1,10 +1,13 @@
 import asyncio
 
-from umipy import UmiPy, BalanceType
+import aiohttp
+
+from umipy import UmiPy
+from umipy.enums import BalanceType
 
 
 async def main():
-    umi = UmiPy()
+    umi = UmiPy(session=aiohttp.ClientSession())
     balance = await umi.get_balance(
         "glz1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsqexcfq"
     )

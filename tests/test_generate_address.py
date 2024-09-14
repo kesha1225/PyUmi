@@ -10,11 +10,11 @@ from umipy import UmiPy, Prefix
         Prefix.UMI,
         Prefix.GLIZE,
         Prefix.GLIZE_STAKING,
-        Prefix.ROD_STAKING,
+        Prefix.DOSTATOK,
         Prefix.ROD_TRADING,
     ],
 )
-async def test_get_balance(umi: UmiPy, prefix: str):
+async def test_get_balance(umi: UmiPy, prefix: Prefix):
     wallet = umi.generate_wallet(prefix=prefix)
     restored = umi.restore_wallet(mnemonic=wallet.mnemonic, prefix=prefix)
 

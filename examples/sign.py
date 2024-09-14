@@ -1,10 +1,12 @@
 import asyncio
 
+import aiohttp
+
 from umipy import UmiPy
 
 
 async def main():
-    umi = UmiPy()
+    umi = UmiPy(session=aiohttp.ClientSession())
 
     some_wallet = umi.generate_wallet()
     print(some_wallet.mnemonic)

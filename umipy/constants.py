@@ -1,20 +1,13 @@
-BASE_URL_MAINNET = "https://mainnet.umi.top"  # mainnet for legacy rod
+BASE_URL_ORIGINAL_MAINNET = "https://mainnet.umi.top"  # mainnet for legacy rod
 BASE_URL_LEGEND_MAINNET = "https://legend.umi.top"  # mainnet for umi legend
 
-BASE_URL_TESTNET = "https://testnet.umi.top"  # testnet for umi legend
 BASE_URL_ORIGINAL_TESTNET = "https://testnet-original.umi.top"  # testnet for legacy rod
-
-BASE_STATS_URL_MAINNET = "https://stats.umi.top"
-BASE_STATS_URL_TESTNET = "https://stats-testnet.umi.top"
+BASE_URL_LEGEND_TESTNET = "https://testnet.umi.top"  # testnet for umi legend
 
 
-class Prefix:
-    UMI = "umi"
-    GLIZE = "glz"
-    GLIZE_STAKING = "gls"
+BASE_STATS_URL_ORIGINAL_MAINNET = "https://stats.umi.top"
+BASE_STATS_URL_ORIGINAL_TESTNET = "https://stats-testnet.umi.top"
 
-    ROD_STAKING = "rod01"
-    ROD_TRADING = "rod"
 
-    UMI_STAKING = "umistake"
-    UMI_TRADING = "umitrade"
+CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+BECH32M_CONST = 0x2BC830A3

@@ -1,3 +1,5 @@
+import datetime
+
 import pydantic
 from pydantic import AliasChoices
 
@@ -106,6 +108,21 @@ class TransactionResponse(pydantic.BaseModel):
     data: Transaction | None = None
 
 
+class SendDataSuccess(pydantic.BaseModel):
+    hash: str
+    type: str
+    version: int
+    amount: int
+    sender_address: str = pydantic.Field(alias="senderAddress")
+    recipient_address: str = pydantic.Field(alias="recipientAddress")
+    timestamp: datetime.datetime
+
+
+class SendDataError(pydantic.BaseModel):
+    code: int
+    message: str
+
+
 class SendResponse(pydantic.BaseModel):
-    status: bool
-    send_data: dict
+    data: SendDataSuccess | None = None
+    error: SendDataError | None = None

@@ -1,10 +1,12 @@
 import asyncio
 
+import aiohttp
+
 from umipy import UmiPy
 
 
 async def main():
-    umi = UmiPy()
+    umi = UmiPy(session=aiohttp.ClientSession())
 
     bad_trans_data = await umi.get_transaction(
         transaction_hash="6f3458c067c6ccc05bee8b5a30706c832a93ae1d965b93c2373ecf902f2403bd"

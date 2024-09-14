@@ -1,23 +1,44 @@
 import time
-from typing import Union, Optional
+from typing import Union
 from base64 import b64encode
 from random import random
 from nacl.bindings.crypto_sign import crypto_sign
 
-from umipy import bech32, Prefix
+from umipy import bech32
+from umipy.enums import Prefix
+
+
+class Transaction(list):
+    def set_version(self, version: int) -> None:
+        self.append(version)
+
+    def set_list(self, address: list[int]) -> None:
+        self.extend(address)
+
+    def set_amount(self, amount: Union[int, float]) -> None:
+        amount_to_bytes: bytes = int(amount).to_bytes(8, "big")
+        to_list: list[int] = [int(i) for i in amount_to_bytes]
+        self.extend(to_list)
+
+    def sign(self, sk: list[int]) -> None:
+        signature = crypto_sign(bytes(self), bytes(sk))
+        self.extend(signature[:64])
+
+    def sign_transaction(self, sk: list[int]) -> None:
+        seconds = int(time.time()) - 10
+        self.extend(to_4(seconds))
+        self.extend(to_4(int(random() * 9999)))
+        self.append(0)
+        self.sign(sk=sk)
 
 
 def to_public_key(address: str) -> list[int]:
-    prefix, list_int, encoding = bech32.bech32_decode(address)
+    prefix, list_int, _ = bech32.bech32_decode(address)
     public_key = bech32.convertbits(list_int, 5, 8, False)
     return public_key
 
 
-def set_version(trx: list[int], version: int) -> None:
-    trx.append(version)
-
-
-def prefix_to_version(prefix: str) -> Optional[int]:
+def prefix_to_version(prefix: Prefix) -> int | None:
     if prefix == "genesis":
         return 0
 
@@ -46,65 +67,12 @@ def to_2(value: int) -> list[int]:
 
 
 def to_4(value: int) -> list[int]:
-    res = [
+    return [
         (value & 0xFF000000) >> 24,
         (value & 0x00FF0000) >> 16,
         (value & 0x0000FF00) >> 8,
         (value & 0x000000FF) >> 0,
     ]
-    return res
-
-
-def set_list(trx: list[int], address: list[int]) -> None:
-    trx += address
-
-
-def set_amount(trx: list[int], amount: Union[int, float]) -> None:
-    amount_to_bytes: bytes = int(amount).to_bytes(8, "big")
-    to_list: list[int] = [int(i) for i in amount_to_bytes]
-    trx += to_list
-
-
-def sign(trx: list[int], sk: list[int]) -> None:
-    signature = crypto_sign(bytes(trx), bytes(sk))
-    trx += signature[:64]
-
-
-def sign_transaction(trx: list[int], sk: list[int]) -> None:
-    seconds = int(time.time()) - 10
-    trx += to_4(seconds)
-    trx += to_4(int(random() * 9999))
-    trx.append(0)
-    sign(trx, sk)
-
-
-def transfer_coins(
-    public_key: list[int],
-    private_key: list[int],
-    target_address: str,
-    amount: Union[int, float],
-    prefix: str | Prefix,
-) -> str:
-    trx: list[int] = []
-    set_version(trx, 8)
-
-    prefix_version = prefix_to_version(prefix)
-    if prefix_version is None:
-        return ""
-
-    prefix_binary = to_2(prefix_version)
-    from_addr = prefix_binary + public_key
-    set_list(trx, from_addr)
-
-    to_pk = to_public_key(target_address)
-    to_addr = prefix_binary + to_pk
-    set_list(trx, to_addr)
-
-    set_amount(trx, amount * 100)
-
-    sign_transaction(trx, private_key)
-
-    return b64encode(bytes(trx)).decode()
 
 
 def transfer_addresses(
@@ -114,8 +82,8 @@ def transfer_addresses(
     amount: Union[int, float],
     send_version: int,
 ) -> str:
-    trx: list[int] = []
-    set_version(trx, send_version)
+    trx = Transaction()
+    trx.set_version(send_version)
 
     if len(to_address) == 62:
         slicer_to = 3
@@ -135,19 +103,19 @@ def transfer_addresses(
 
     token_from = from_address[:slicer_from]
 
-    prefix_binary_to = to_2(prefix_to_version(token_to))
-    prefix_binary_from = to_2(prefix_to_version(token_from))
+    prefix_binary_to = to_2(prefix_to_version(prefix=token_to))
+    prefix_binary_from = to_2(prefix_to_version(prefix=token_from))
 
     from_pk = to_public_key(from_address)
     from_addr = prefix_binary_from + from_pk
-    set_list(trx, from_addr)
+    trx.set_list(from_addr)
 
     to_pk = to_public_key(to_address)
     to_addr = prefix_binary_to + to_pk
-    set_list(trx, to_addr)
+    trx.set_list(to_addr)
 
-    set_amount(trx, amount * 100)
+    trx.set_amount(amount * 100)
 
-    sign_transaction(trx, private_key)
+    trx.sign_transaction(private_key)
 
     return b64encode(bytes(trx)).decode()

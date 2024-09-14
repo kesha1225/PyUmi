@@ -23,12 +23,13 @@ You can find more examples - [examples/](examples/)
 
 ```python3
 import asyncio
+import aiohttp
 
 from umipy import UmiPy
 
 
 async def main():
-    umi = UmiPy()
+    umi = UmiPy(session=aiohttp.ClientSession())
     balance = await umi.get_balance(
         "umi17ymaed9h9hq7s5pc2f5fhmlzpmsk3qtc6g2cgm360zysz0uvq44qnxlsuz"
     )

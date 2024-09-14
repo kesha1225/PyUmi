@@ -1,10 +1,12 @@
 import asyncio
 
+import aiohttp
+
 from umipy import UmiPy, Prefix
 
 
 async def main():
-    umi = UmiPy()
+    umi = UmiPy(session=aiohttp.ClientSession())
 
     my_mnemonic = "word1 word2 ..."
     old_wallet = umi.restore_wallet(my_mnemonic, prefix=Prefix.GLIZE)

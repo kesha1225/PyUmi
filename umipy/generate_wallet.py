@@ -4,7 +4,8 @@ from mnemonic import Mnemonic
 
 from nacl.bindings import crypto_sign_seed_keypair
 
-from umipy import bech32, Prefix
+from umipy import bech32
+from umipy.enums import Prefix
 
 
 def generate_mnemo_words() -> str:
@@ -26,12 +27,12 @@ def generate_pk_sk(unsigned_list_int: list[int]) -> tuple[list[int], list[int]]:
     return [int(i) for i in public_key], [int(i) for i in secret_key]
 
 
-def generate_wallet_address(public_key: Union[list[int], bytes], prefix: str) -> str:
+def generate_wallet_address(public_key: Union[list[int], bytes], prefix: Prefix) -> str:
     convert_bits = bech32.convertbits(public_key, 8, 5, True)
     return bech32.bech32_encode(prefix, convert_bits, 0)
 
 
-def generate_wallet(prefix: str | Prefix) -> tuple[str, str, list[int], list[int]]:
+def generate_wallet(prefix: Prefix) -> tuple[str, str, list[int], list[int]]:
     mnemo = generate_mnemo_words()
     seed = to_seed(mnemo)
     unsigned_int = to_unsigned_list_int(seed)
@@ -40,7 +41,7 @@ def generate_wallet(prefix: str | Prefix) -> tuple[str, str, list[int], list[int
     return address, mnemo, pk, sk
 
 
-def restore_wallet(mnemonic: str, prefix: str | Prefix):
+def restore_wallet(mnemonic: str, prefix: Prefix):
     seed = to_seed(mnemonic)
     unsigned_int = to_unsigned_list_int(seed)
     pk, sk = generate_pk_sk(unsigned_int)
