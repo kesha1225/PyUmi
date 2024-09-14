@@ -44,21 +44,33 @@ def bech32_encode(hrp: str, data: list[int], spec: int) -> str:
 
 
 def bech32_decode(
-    bech: str,
+    address: str,
 ) -> tuple[str | None, list[int] | None, Encoding | None] | None:
     """Validate a Bech32/Bech32m string, and determine HRP and data."""
-    if (any(ord(x) < 33 or ord(x) > 126 for x in bech)) or (
-        bech.lower() != bech and bech.upper() != bech
-    ):
+
+    # проверяем точно ли в строке символы с аски кодами от 33 до 126, исключаем пробелы и хуйню
+    if any(ord(x) < 33 or ord(x) > 126 for x in address):
         return None, None, None
-    bech = bech.lower()
-    pos = bech.rfind("1")
-    if pos < 1 or pos + 7 > len(bech) or len(bech) > 90:
+
+    # проверяем точно ли в строке все в только нижем или только венрхнем регистре
+    if address.lower() != address and address.upper() != address:
         return None, None, None
-    if not all(x in CHARSET for x in bech[pos + 1 :]):
+
+    address = address.lower()
+
+    pos = address.rfind("1")
+
+    # если разделитель в самом начале или слишком близко к концу значит чета не то ну и адрес не больше 90
+    if pos < 1 or pos + 7 > len(address) or len(address) > 90:
         return None, None, None
-    hrp = bech[:pos]
-    data = [CHARSET.find(x) for x in bech[pos + 1 :]]
+
+    # Каждый символ после разделителя должен быть одним из символов из набора, определённого в CHARSET
+    if not all(x in CHARSET for x in address[pos + 1 :]):
+        return None, None, None
+
+    # все что до 1 это хрп все что после это адрес
+    hrp = address[:pos]
+    data = [CHARSET.find(x) for x in address[pos + 1 :]]
     spec = bech32_verify_checksum(hrp, data)
     if spec is None:
         return None, None, None

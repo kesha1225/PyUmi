@@ -1,3 +1,4 @@
+from umipy import bech32
 from umipy.constants import (
     BASE_URL_ORIGINAL_MAINNET,
     BASE_STATS_URL_ORIGINAL_MAINNET,
@@ -30,9 +31,7 @@ def get_send_version(is_legend: bool) -> int:
 
 
 def get_address_prefix(address: str) -> Prefix | None:
-    sorted_prefixes = sorted(Prefix, key=len, reverse=True)
-
-    for prefix in sorted_prefixes:
-        if address.startswith(prefix):
-            return Prefix(prefix)
-    return None
+    prefix, _, _ = bech32.bech32_decode(address=address)
+    if prefix is None:
+        return None
+    return Prefix(prefix)

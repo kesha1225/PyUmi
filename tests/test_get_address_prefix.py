@@ -32,14 +32,6 @@ from umipy import Prefix, get_address_prefix
             Prefix.ROD_WALK,
         ),
         (
-            "rod991xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jyls7q3dqm",
-            Prefix.ROD_99,
-        ),
-        (
-            "rod651xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jyls7q3dqm",
-            Prefix.ROD_65,
-        ),
-        (
             "gls1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jyls3cmu2c",
             Prefix.GLIZE_STAKING,
         ),
@@ -62,6 +54,10 @@ from umipy import Prefix, get_address_prefix
         (
             "umitrade1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsz49rj7",
             Prefix.UMI_TRADING,
+        ),
+        (
+            "abctrade1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsz49rj7",
+            None,
         ),
     ],
 )
