@@ -13,7 +13,6 @@ from umipy.models import (
     WalletResponse,
     Keys,
     TransactionResponse,
-    InputTransactionsResponse,
     SendResponse,
     Transaction,
 )
