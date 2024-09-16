@@ -80,13 +80,6 @@ class TransactionsResponse(pydantic.BaseModel):
     items: list[Transaction]
 
 
-class InputTransactionsResponse(pydantic.BaseModel):
-    total_count: int = pydantic.Field(
-        alias="totalCount", validation_alias=AliasChoices("totalCount", "total_count")
-    )
-    items: list[Transaction]
-
-
 class Keys(pydantic.BaseModel):
     public_key: list[int]
     private_key: list[int]
