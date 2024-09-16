@@ -232,7 +232,9 @@ class UmiPy:
             )
         ).json()
         if "error" in response:
-            return TransactionResponse(status="error", code=500, data=None)
+            return TransactionResponse(
+                status="error", code=500, message=response["error"]["message"]
+            )
         return TransactionResponse(
             status="success", code=None, data=Transaction(**response["data"])
         )
