@@ -11,3 +11,6 @@ BASE_STATS_URL_ORIGINAL_TESTNET = "https://stats-testnet.umi.top"
 
 CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 BECH32M_CONST = 0x2BC830A3
+
+
+MAX_TRANSACTIONS_REQUEST_LIMIT = 65535
