@@ -6,7 +6,7 @@ from nacl.exceptions import BadSignatureError
 
 from umipy.enums import BalanceType, Prefix
 from umipy.generate_wallet import generate_wallet, restore_wallet
-from umipy.helpers import get_api_urls, get_send_version
+from umipy.helpers import get_api_url, get_send_version
 from umipy.models import (
     BalanceResponse,
     TransactionsResponse,
@@ -26,23 +26,11 @@ class UmiPy:
         is_testnet: bool = False,
         is_legend: bool = False,
     ):
-        base_url, stats_url = get_api_urls(is_testnet=is_testnet, is_legend=is_legend)
-        self.is_legend = is_legend
+        base_url = get_api_url(is_testnet=is_testnet, is_legend=is_legend)
         self.base_url = base_url
-
-        self._base_stats_url = stats_url
-
         self.send_version = get_send_version(is_legend=is_legend)
 
         self.session = session
-
-    @property
-    def base_stats_url(self):
-        if self.is_legend:
-            raise AttributeError(
-                "Error. Cant get base_stats_url for umi legend blockchain."
-            )
-        return self._base_stats_url
 
     async def request(
         self,
@@ -158,24 +146,6 @@ class UmiPy:
         return result.decode() == original_message
 
     async def get_transaction(self, transaction_hash: str) -> TransactionResponse:
-        if self.is_legend:
-            return await self._get_legend_transaction_from_node(
-                transaction_hash=transaction_hash
-            )
-
-        response = TransactionResponse(
-            **await (
-                await self.session.request(
-                    method="GET",
-                    url=f"{self.base_stats_url}/transactions/{transaction_hash}",
-                )
-            ).json()
-        )
-        return response
-
-    async def _get_legend_transaction_from_node(
-        self, transaction_hash: str
-    ) -> TransactionResponse:
         response = await (
             await self.session.request(
                 method="GET",

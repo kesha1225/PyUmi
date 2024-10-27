@@ -11,7 +11,7 @@ async def main():
     res = await umi.get_transactions(
         address="umistake1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylswu0l6g",
         limit=10,
-        offset=0
+        offset=0,
     )
     print(res)
     await umi.close()

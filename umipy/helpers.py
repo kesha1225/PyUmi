@@ -1,26 +1,23 @@
 from umipy import bech32
 from umipy.constants import (
     BASE_URL_ORIGINAL_MAINNET,
-    BASE_STATS_URL_ORIGINAL_MAINNET,
     BASE_URL_LEGEND_TESTNET,
-    BASE_STATS_URL_ORIGINAL_TESTNET,
     BASE_URL_LEGEND_MAINNET,
     BASE_URL_ORIGINAL_TESTNET,
 )
 from umipy.enums import Prefix
 
 
-def get_api_urls(is_testnet: bool, is_legend: bool) -> tuple[str, str | None]:
+def get_api_url(is_testnet: bool, is_legend: bool) -> str:
     match (is_legend, is_testnet):
         case (True, False):
-            return BASE_URL_LEGEND_MAINNET, None
+            return BASE_URL_LEGEND_MAINNET
         case (True, True):
-            return BASE_URL_LEGEND_TESTNET, None
-
+            return BASE_URL_LEGEND_TESTNET
         case (False, True):
-            return BASE_URL_ORIGINAL_TESTNET, BASE_STATS_URL_ORIGINAL_TESTNET
+            return BASE_URL_ORIGINAL_TESTNET
         case (False, False):
-            return BASE_URL_ORIGINAL_MAINNET, BASE_STATS_URL_ORIGINAL_MAINNET
+            return BASE_URL_ORIGINAL_MAINNET
 
 
 def get_send_version(is_legend: bool) -> int:

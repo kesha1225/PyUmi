@@ -61,17 +61,21 @@ from umipy import UmiPy, BalanceType
 )
 async def test_get_confirmed_balance(
     mocker,
-    umi: UmiPy,
+    umi_mainnet_v1: UmiPy,
     address: str,
     mock_response: dict,
     balance_type: BalanceType,
     expected_balance: float,
 ):
-    mocker.patch.object(umi, "request", AsyncMock(return_value=mock_response))
+    mocker.patch.object(
+        umi_mainnet_v1, "request", AsyncMock(return_value=mock_response)
+    )
 
     if balance_type is BalanceType.confirmed:
-        assert (await umi.get_balance(address=address)).balance == expected_balance
+        assert (
+            await umi_mainnet_v1.get_balance(address=address)
+        ).balance == expected_balance
 
     assert (
-        await umi.get_balance(address=address, balance_type=balance_type)
+        await umi_mainnet_v1.get_balance(address=address, balance_type=balance_type)
     ).balance == expected_balance

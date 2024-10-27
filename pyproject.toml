@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "umipy"
-version = "2.0.4"
+version = "2.1.0"
 description = "api wrapper for umi.top crypto"
 authors = ["kesha1225"]
 readme = "README.md"
