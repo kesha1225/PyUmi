@@ -1,4 +1,5 @@
 import base64
+from typing import Sequence
 
 import aiohttp
 from nacl.bindings import crypto_sign, crypto_sign_open
@@ -15,6 +16,8 @@ from umipy.models import (
     TransactionResponse,
     SendResponse,
     Transaction,
+    BalancesResponse,
+    BalanceAddressData,
 )
 from umipy.transfer import transfer_addresses, to_public_key
 
@@ -56,6 +59,24 @@ class UmiPy:
             return BalanceResponse(balance=0)
 
         return BalanceResponse(balance=response["data"][balance_type.value] / 100)
+
+    async def get_balances_bulk(
+        self,
+        addresses: Sequence[str],
+    ) -> BalancesResponse:
+        response = await self.request(
+            "POST", f"/api/balances", data={"data": list(addresses)}
+        )
+        return BalancesResponse(
+            items=list(
+                map(
+                    lambda balance: BalanceAddressData(
+                        balance=balance["balance"] / 100, address=balance["address"]
+                    ),
+                    response["data"],
+                )
+            )
+        )
 
     async def get_transactions(
         self, address: str, limit: int | None = None, offset: int | None = None

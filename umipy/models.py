@@ -8,6 +8,15 @@ class BalanceResponse(pydantic.BaseModel):
     balance: float
 
 
+class BalanceAddressData(pydantic.BaseModel):
+    address: str
+    balance: float
+
+
+class BalancesResponse(pydantic.BaseModel):
+    items: list[BalanceAddressData]
+
+
 class Transaction(pydantic.BaseModel):
     height: int
     block_timestamp: str = pydantic.Field(

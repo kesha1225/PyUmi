@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from umipy import UmiPy, BalanceType
+from umipy.models import BalancesResponse
 
 
 @pytest.mark.asyncio
@@ -79,3 +80,44 @@ async def test_get_confirmed_balance(
     assert (
         await umi_mainnet_v1.get_balance(address=address, balance_type=balance_type)
     ).balance == expected_balance
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "addresses, mock_response, response_len",
+    [
+        (
+            [
+                "glz1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsqexcfq",
+                "glz1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsqexcfq",
+            ],
+            {
+                "items": [
+                    {
+                        "address": "glz1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsqexcfq",
+                        "balance": 754422,
+                    },
+                    {
+                        "address": "glz1xhgwhyczqwphzh3zzluqch9j4uxargp6pnnn0fd9wgy7hq79jylsqexcfq",
+                        "balance": 754422,
+                    },
+                ]
+            },
+            2,
+        )
+    ],
+)
+async def test_get_bulk_balance(
+    mocker,
+    umi_mainnet_v1: UmiPy,
+    addresses: list[str],
+    mock_response: dict,
+    response_len: float,
+):
+    mocker.patch.object(
+        umi_mainnet_v1, "request", AsyncMock(return_value=mock_response)
+    )
+
+    response = BalancesResponse(**mock_response)
+
+    assert len(response.items) == response_len
