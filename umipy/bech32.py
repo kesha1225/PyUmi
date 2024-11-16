@@ -1,3 +1,5 @@
+import typing
+
 from umipy.constants import BECH32M_CONST, CHARSET
 from umipy.enums import Encoding
 
@@ -45,7 +47,7 @@ def bech32_encode(hrp: str, data: list[int], spec: int) -> str:
 
 def bech32_decode(
     address: str,
-) -> tuple[str | None, list[int] | None, Encoding | None] | None:
+) -> tuple[str | None, list[int] | None, Encoding | None]:
     """Validate a Bech32/Bech32m string, and determine HRP and data."""
 
     # проверяем точно ли в строке символы с аски кодами от 33 до 126, исключаем пробелы и хуйню
@@ -79,7 +81,7 @@ def bech32_decode(
 
 def convertbits(
     data: list[int], frombits: int, tobits: int, pad: bool = True
-) -> list[int] | None:
+) -> list[int] | typing.NoReturn:
     """General power-of-2 base conversion."""
     acc = 0
     bits = 0
@@ -88,7 +90,10 @@ def convertbits(
     max_acc = (1 << (frombits + tobits - 1)) - 1
     for value in data:
         if value < 0 or (value >> frombits):
-            return None
+            raise ValueError(
+                f"Bad convertbits {data=}, {frombits=}, {tobits=}, "
+                f"value < 0 or (value >> frombits)"
+            )
         acc = ((acc << frombits) | value) & max_acc
         bits += frombits
         while bits >= tobits:
@@ -98,5 +103,8 @@ def convertbits(
         if bits:
             ret.append((acc << (tobits - bits)) & maxv)
     elif bits >= frombits or ((acc << (tobits - bits)) & maxv):
-        return None
+        raise ValueError(
+            f"Bad convertbits {data=}, {frombits=}, {tobits=}, "
+            f"bits >= frombits or ((acc << (tobits - bits)) & maxv)"
+        )
     return ret

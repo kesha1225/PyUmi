@@ -1,4 +1,3 @@
-from typing import Union
 from hashlib import pbkdf2_hmac, sha256
 from mnemonic import Mnemonic
 
@@ -27,7 +26,7 @@ def generate_pk_sk(unsigned_list_int: list[int]) -> tuple[list[int], list[int]]:
     return [int(i) for i in public_key], [int(i) for i in secret_key]
 
 
-def generate_wallet_address(public_key: Union[list[int], bytes], prefix: Prefix) -> str:
+def generate_wallet_address(public_key: list[int], prefix: Prefix) -> str:
     convert_bits = bech32.convertbits(public_key, 8, 5, True)
     return bech32.bech32_encode(prefix, convert_bits, 0)
 

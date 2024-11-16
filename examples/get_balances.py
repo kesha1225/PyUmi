@@ -21,9 +21,7 @@ async def main():
 
     addresses *= 100
 
-    balances = await umi.get_balances_bulk(
-        addresses=addresses
-    )
+    balances = await umi.get_balances_bulk(addresses=addresses)
     for balance in balances.items:
         print(balance.address, balance.balance)
 
