@@ -1,5 +1,4 @@
 import time
-from typing import Union
 from base64 import b64encode
 from random import random
 from nacl.bindings.crypto_sign import crypto_sign
@@ -15,7 +14,7 @@ class Transaction(list):
     def set_list(self, address: list[int]) -> None:
         self.extend(address)
 
-    def set_amount(self, amount: Union[int, float]) -> None:
+    def set_amount(self, amount: int | float) -> None:
         amount_to_bytes: bytes = int(amount).to_bytes(8, "big")
         to_list: list[int] = [int(i) for i in amount_to_bytes]
         self.extend(to_list)
@@ -81,7 +80,7 @@ def transfer_addresses(
     private_key: list[int],
     from_address: str,
     to_address: str,
-    amount: Union[int, float],
+    amount: int | float,
     send_version: int,
 ) -> str:
     trx = Transaction()
