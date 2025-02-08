@@ -34,6 +34,9 @@ class Transaction(pydantic.BaseModel):
     type: str
     version: int
     amount: int
+    amount_micro: int = pydantic.Field(
+        validation_alias=AliasChoices("amountMicro", "amount_micro")
+    )
     sender_address: str = pydantic.Field(
         validation_alias=AliasChoices("senderAddress", "sender_address")
     )
