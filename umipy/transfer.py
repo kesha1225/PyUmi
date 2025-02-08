@@ -103,15 +103,15 @@ def transfer_addresses(
         slicer_from = 5
 
     token_from = from_address[:slicer_from]
-    
+
     version_to = prefix_to_version(prefix=Prefix(token_to))
     version_from = prefix_to_version(prefix=Prefix(token_from))
-    
+
     if version_to is None:
         raise ValueError(f"Invalid address, prefix is None {token_to=}")
     if version_from is None:
         raise ValueError(f"Invalid address, prefix is None {token_from=}")
-    
+
     prefix_binary_to = to_2(version_to)
     prefix_binary_from = to_2(version_from)
 
