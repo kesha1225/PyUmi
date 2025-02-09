@@ -5,7 +5,7 @@ from umipy.constants import (
     BASE_URL_LEGEND_MAINNET,
     BASE_URL_ORIGINAL_TESTNET,
 )
-from umipy.enums import Prefix
+from umipy.enums import Prefix, SendVersion
 
 
 def get_api_url(is_testnet: bool, is_legend: bool) -> str:
@@ -21,10 +21,12 @@ def get_api_url(is_testnet: bool, is_legend: bool) -> str:
 
 
 def get_send_version(is_legend: bool) -> int:
+    # if is_legend:
+    #     return SendVersion.LEGEND_DEFAULT  # 100 для не-микротранзакций
     if is_legend:
-        return 100
+        return SendVersion.LEGEND_MICRO
     else:
-        return 8
+        return SendVersion.ROD
 
 
 def get_address_prefix(address: str) -> Prefix | None:

@@ -57,6 +57,9 @@ class UmiPy:
         response = await self.request("GET", f"/api/addresses/{address}/account")
         if "error" in response:
             return BalanceResponse(balance=0)
+        
+        if "confirmedBalanceMicro" in response["data"]:
+            return BalanceResponse(balance=response["data"]["confirmedBalanceMicro"] / 1_000_000)
 
         return BalanceResponse(balance=response["data"][balance_type.value] / 100)
 

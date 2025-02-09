@@ -123,3 +123,9 @@ class Prefix(enum.StrEnum):
     ROD_97 = "rod97"
     ROD_98 = "rod98"
     ROD_99 = "rod99"
+
+
+class SendVersion(enum.IntEnum):
+    ROD = 8
+    LEGEND_DEFAULT = 100
+    LEGEND_MICRO = 200
