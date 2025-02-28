@@ -40,7 +40,9 @@ def generate_wallet(prefix: Prefix) -> tuple[str, str, list[int], list[int]]:
     return address, mnemo, pk, sk
 
 
-def restore_wallet(mnemonic: str, prefix: Prefix):
+def restore_wallet(
+    mnemonic: str, prefix: Prefix
+) -> tuple[str, str, list[int], list[int]]:
     seed = to_seed(mnemonic)
     unsigned_int = to_unsigned_list_int(seed)
     pk, sk = generate_pk_sk(unsigned_int)

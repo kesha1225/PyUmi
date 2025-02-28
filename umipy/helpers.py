@@ -18,6 +18,10 @@ def get_api_url(is_testnet: bool, is_legend: bool) -> str:
             return BASE_URL_ORIGINAL_TESTNET
         case (False, False):
             return BASE_URL_ORIGINAL_MAINNET
+        case _:
+            raise ValueError(
+                f"Invalid combination of is_testnet and is_legend {is_testnet=}, {is_legend=}"
+            )
 
 
 def get_send_version(is_legend: bool) -> int:

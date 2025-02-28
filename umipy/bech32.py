@@ -34,7 +34,7 @@ def bech32_verify_checksum(hrp: str, data: list[int]) -> Encoding | None:
 def bech32_create_checksum(hrp: str, data: list[int], spec: int) -> list[int]:
     """Compute the checksum values given HRP and data."""
     values = bech32_hrp_expand(hrp) + data
-    const = BECH32M_CONST if spec == Encoding.BECH32M else 1
+    const = BECH32M_CONST if spec == Encoding.BECH32M.value else 1
     polymod = bech32_polymod(values + [0, 0, 0, 0, 0, 0]) ^ const
     return [(polymod >> 5 * (5 - i)) & 31 for i in range(6)]
 

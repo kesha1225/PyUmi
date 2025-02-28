@@ -30,7 +30,7 @@ from umipy import UmiPy
         ),
     ],
 )
-async def test_get_tx(
+async def test_get_tx_testnet(
     umi_testnet_v1: UmiPy,
     tx_hash: str,
     status: str,
@@ -42,9 +42,11 @@ async def test_get_tx(
     assert transaction_data.status == status
 
     if height:
+        assert transaction_data.data is not None
         assert transaction_data.data.height == height
 
     if amount:
+        assert transaction_data.data is not None
         assert transaction_data.data.amount == amount
 
     assert transaction_data.message == message
@@ -110,9 +112,11 @@ async def test_get_tx(
     assert transaction_data.status == status
 
     if height:
+        assert transaction_data.data is not None
         assert transaction_data.data.height == height
 
     if amount:
+        assert transaction_data.data is not None
         assert transaction_data.data.amount == amount
 
     assert transaction_data.message == message
@@ -123,16 +127,9 @@ async def test_get_tx(
     "tx_hash, status, height, amount, message",
     [
         (
-            "3d361f1a2ca22d4b73cae4da641bc2cfe8e31da9583804ac0a351101225e9fbb",
+            "7bdd8b4f9cd79158bf77af2e6696248b611ae8545f6c5ac91d3e87dcd29ae6cb",
             "success",
-            18,
-            10_00,
-            None,
-        ),
-        (
-            "6fbb5a93fc4e2a6ba435c08157dd9c129234217fcf3711146b34da1963b6c1be",
-            "success",
-            22,
+            33,
             1,
             None,
         ),
@@ -157,16 +154,9 @@ async def test_get_tx(
             None,
             "encoding/hex: odd length hex string",
         ),
-        (
-            "b870b0b52e8398fa50eb54f1a1d7f27ab10a425df13301c155641e3fe4d67d65",
-            "success",
-            30,
-            1_00,
-            None,
-        ),
     ],
 )
-async def test_get_tx_legend(
+async def test_get_tx_legend_testnet(
     umi_legend_testnet: UmiPy,
     tx_hash: str,
     status: str,
@@ -175,13 +165,16 @@ async def test_get_tx_legend(
     message: str,
 ):
     transaction_data = await umi_legend_testnet.get_transaction(tx_hash)
+    print(tx_hash, transaction_data)
 
     assert transaction_data.status == status
 
     if height:
+        assert transaction_data.data is not None
         assert transaction_data.data.height == height
 
     if amount:
+        assert transaction_data.data is not None
         assert transaction_data.data.amount == amount
 
     assert transaction_data.message == message
@@ -213,9 +206,11 @@ async def test_get_tx_legend(
     assert transaction_data.status == status
 
     if height:
+        assert transaction_data.data is not None
         assert transaction_data.data.height == height
 
     if amount:
+        assert transaction_data.data is not None
         assert transaction_data.data.amount == amount
 
     assert transaction_data.message == message

@@ -7,7 +7,7 @@ from umipy import bech32
 from umipy.enums import Prefix, SendVersion
 
 
-class Transaction(list):
+class Transaction(list[int]):
     def set_version(self, version: int) -> None:
         self.append(version)
 
@@ -122,7 +122,7 @@ def transfer_addresses(
     to_pk = to_public_key(to_address)
     to_addr = prefix_binary_to + to_pk
     trx.set_list(to_addr)
-    
+
     if send_version != SendVersion.LEGEND_MICRO:
         trx.set_amount(amount * 100)
     else:

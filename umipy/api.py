@@ -1,11 +1,12 @@
 import base64
-from typing import Sequence
+from typing import Sequence, Any
 
 import aiohttp
 from nacl.bindings import crypto_sign, crypto_sign_open
 from nacl.exceptions import BadSignatureError
 
 from umipy.enums import BalanceType, Prefix
+from umipy.exceptions import UmiApiException
 from umipy.generate_wallet import generate_wallet, restore_wallet
 from umipy.helpers import get_api_url, get_send_version
 from umipy.models import (
@@ -39,16 +40,20 @@ class UmiPy:
         self,
         method: str,
         path: str,
-        params: dict | None = None,
-        data: dict | str | None = None,
-    ):
+        params: dict[str, Any] | None = None,
+        data: dict[str, Any] | str | None = None,
+    ) -> Any:
         response = await self.session.request(
             method=method, url=f"{self.base_url}{path}", params=params, json=data
         )
+
+        if response.status != 200:
+            raise UmiApiException(f"Error {response.status} - {await response.text()}")
+
         json_response = await response.json()
         return json_response
 
-    async def close(self):
+    async def close(self) -> None:
         await self.session.close()
 
     async def get_balance(
@@ -57,9 +62,11 @@ class UmiPy:
         response = await self.request("GET", f"/api/addresses/{address}/account")
         if "error" in response:
             return BalanceResponse(balance=0)
-        
+
         if "confirmedBalanceMicro" in response["data"]:
-            return BalanceResponse(balance=response["data"]["confirmedBalanceMicro"] / 1_000_000)
+            return BalanceResponse(
+                balance=response["data"]["confirmedBalanceMicro"] / 1_000_000
+            )
 
         return BalanceResponse(balance=response["data"][balance_type.value] / 100)
 
@@ -68,7 +75,7 @@ class UmiPy:
         addresses: Sequence[str],
     ) -> BalancesResponse:
         response = await self.request(
-            "POST", f"/api/balances", data={"data": list(addresses)}
+            "POST", "/api/balances", data={"data": list(addresses)}
         )
         return BalancesResponse(
             items=list(
